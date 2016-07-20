@@ -59,6 +59,10 @@ sub cleanup {
         $File::Find::prune = 1;
         return;
     }
+    if ($File::Find::name eq "/etc/.snapshots") {
+        $File::Find::prune = 1;
+        return;
+    }
     if (-l $_) {
         my $target = readlink $_;
         if (substr($target, 0, length $static) eq $static) {
