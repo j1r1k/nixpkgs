@@ -99,4 +99,9 @@ in buildFHSUserEnv rec {
         exec "$run" "$@"
       '';
   };
+
+  extraBindMounts = [
+    "/etc/dbus-1"
+    "/etc/pulse"
+  ];
 }
