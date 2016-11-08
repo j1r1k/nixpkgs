@@ -1,24 +1,21 @@
-{stdenv, fetchurl, which}:
+{stdenv, fetchFromGitHub, which}:
 let
-  s = # Generated upstream information
-  rec {
-    baseName="firejail";
-    version="0.9.42-rc1";
-    name="${baseName}-${version}";
-    url="mirror://sourceforge/project/firejail/firejail/firejail-0.9.42~rc1.tar.bz2";
-    sha256="11br6xp86bxs1ic2x683hbvg1hk8v2wp8cw6blj0zz3cdl0pcjqf";
+  baseName="firejail";
+  version="0.9.38.4";
+  name="${baseName}-${version}";
+in
+stdenv.mkDerivation {
+  inherit name version;
+  src = fetchFromGitHub {
+    owner = "netblue30";
+    repo = "firejail";
+    rev = version;
+    sha256 = "1ksngr03pdh3ljn6x4x5ps37whijp85nnjg8fqb9qdj9ik3jyfan";
   };
+
   buildInputs = [
     which
   ];
-in
-stdenv.mkDerivation {
-  inherit (s) name version;
-  inherit buildInputs;
-  src = fetchurl {
-    inherit (s) url sha256;
-    name = "${s.name}.tar.bz2";
-  };
 
   preConfigure = ''
     sed -e 's@/bin/bash@${stdenv.shell}@g' -i $( grep -lr /bin/bash .)
@@ -32,7 +29,8 @@ stdenv.mkDerivation {
   '';
 
   meta = {
-    inherit (s) version;
+    inherit version;
+    inherit name;
     description = ''Namespace-based sandboxing tool for Linux'';
     license = stdenv.lib.licenses.gpl2Plus ;
     maintainers = [stdenv.lib.maintainers.raskin];
